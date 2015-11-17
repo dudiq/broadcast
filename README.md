@@ -1,5 +1,2 @@
-/*
- * broadcast module
- * just using MEDIATOR pattern
- *
- * */
+#broadcast module
+#just using MEDIATOR pattern
