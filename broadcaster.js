@@ -475,5 +475,5 @@
     /*jshint -W055*/
     var inst = new BroadcastClass('core');
 
-    window.broadcaster = inst;
+    window.broadcast = inst;
 })();
