@@ -51,7 +51,7 @@
      *
      *
      * // will create namespace evs with detection of collisions
-     * var evs = broadcast.putEvents('my-namespace', {
+     * var evs = broadcast.events('my-namespace', {
      *  myEv1: 'myEv1',
      *  myEv2: 'myEv2'
      * })
@@ -59,7 +59,7 @@
      * broadcast.trig(evs.myEv1); - will trigger message
      *
      * // will return evs namespace from other places
-     * var evs = broadcast.getEvents('my-namespace');
+     * var evs = broadcast.events('my-namespace');
      *
      *
      * */
@@ -110,6 +110,7 @@
         callback._dirty = null;
         callback._once = null;
         callback._namespace = null;
+        callback._context = null;
     }
 
     // clean all targets, what was dirty
@@ -133,7 +134,6 @@
         var all = (!!namespace && !!uCallback);
 
         setTimeout(function(){
-            var cleanAllNames = !namespace;
             // clean all dirty callbacks after callstack done
             for (var i = targets.length - 1; i >= 0; i--){
                 var tarCall = targets[i];
@@ -206,8 +206,9 @@
     //
     // msgs - messages
     // callback - method, when messages fires
-    p.on = function(msgs, namespace, userCallback){
+    p.on = function(msgs, namespace, userCallback, context){
         if (typeof namespace == "function"){
+            context = userCallback;
             userCallback = namespace;
             namespace = null;
         }
@@ -222,7 +223,7 @@
             function callback(){
                 //userCallback();
             }
-
+            callback._context = context;
             callback._link = userCallback;
             callback._name = userCallback.name; // to defined, from what callback it was
 
@@ -246,14 +247,15 @@
     //
     // msgs - messages
     // callback - method, when messages fires
-    p.one = function(msg, namespace, callback) {
+    p.one = function(msg, namespace, callback, context) {
         if (typeof namespace == "function"){
+            context = callback;
             callback = namespace;
             namespace = null;
         }
         if (callback){
             callback._once = true;
-            this.on(msg, namespace, callback);
+            this.on(msg, namespace, callback, context);
         }
         return this;
     };
@@ -303,15 +305,15 @@
     //
     // msg - string message
     // params - event params
-    p.trig = function(msg, params) {
+    p.trig = function(msg, param1, param2, param3) {
         var targets = this.map[msg];
         if (targets){
             for (var i = 0, l = targets.length; i < l; i++){
                 var callback = targets[i];
                 if (!callback._dirty){
                     var handler = callback._link;
-                    var context = handler.cont;
-                    var res = handler.call(context, params);
+                    var context = callback._context;
+                    var res = handler.call(context, param1, param2, param3);
                     if (callback._once){
                         // remove them
                         cleanCallback(callback);
@@ -380,7 +382,8 @@
         return this;
     };
 
-    p.putEvents = function(evName, events){
+    // set events
+    p.putEvents = p.events = function(evName, events){
         if (events){
             //setter
             addEvents.call(this, evName, events);
@@ -389,6 +392,7 @@
         return this.getEvents(evName);
     };
 
+    // return events by key
     p.getEvents = function(evName, opt){
         var eventsMap = this.eventsMap;
         if (!eventsMap[evName]){
@@ -401,6 +405,7 @@
         return eventsMap[evName];
     };
 
+    // return all events map
     p.getAllEvents = function(){
         return this.eventsMap;
     };
@@ -472,8 +477,6 @@
     }
 
 
-    /*jshint -W055*/
     var inst = new BroadcastClass('core');
-
     window.broadcast = inst;
 })();
