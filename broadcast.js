@@ -480,10 +480,18 @@
         }
     });
 
-    if (typeof module == 'object' && typeof module.exports != 'undefined'){
+    if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
         module.exports = BroadcastClass;
-    } else if (typeof window == 'object'){
-        window.JrBroadcastClass = BroadcastClass;
+    }
+    else {
+        if (typeof define === 'function' && define.amd) {
+            define([], function() {
+                return BroadcastClass;
+            });
+        }
+        else {
+            window.JrBroadcastClass = BroadcastClass;
+        }
     }
 
 })();
