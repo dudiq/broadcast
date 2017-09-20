@@ -54,19 +54,26 @@
  * // will trigger after current callstack is done
  * broadcast.aTrig('my-event', params);
  *
+ *
+ * licence: MIT, dudiq 2012
+ *
  **/
 (function () {
 
     var canUseConsole = (typeof console == 'object');
+    var isSilent = false;
+    var showTriggers = false;
 
     function showWarning(msg) {
-        if (canUseConsole) {
+        if (canUseConsole && !isSilent) {
             console.warn(getLogPrefix.call(this) + msg);
         }
     }
 
     function showError(msg) {
-        throw new Error(getLogPrefix.call(this) + msg);
+        if (!isSilent) {
+            throw new Error(getLogPrefix.call(this) + msg);
+        }
     }
 
     function getLogPrefix() {
@@ -89,6 +96,20 @@
             this._broadName = name;
         }
     }
+
+    BroadcastClass.silent = function (val) {
+        if (val !== undefined){
+            isSilent = val ? true : false;
+        }
+        return isSilent;
+    };
+
+    BroadcastClass.showTriggers = function (val) {
+        if (val !== undefined){
+            showTriggers = val;
+        }
+        return showTriggers;
+    };
 
     // split messages string and call callback for each
     //
@@ -384,6 +405,9 @@
         // msg - string message
         // params - event params
         trig: function (msg, param1, param2, param3) {
+            if (canUseConsole && (showTriggers === true || showTriggers == this._broadName)){
+                console.log('#Broadcast[' + this._broadName + ']', msg, param1, param2, param3);
+            }
             var targets = this._map[msg];
             if (targets) {
                 for (var i = 0, l = targets.length; i < l; i++) {
