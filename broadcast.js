@@ -71,8 +71,8 @@
     }
 
     function showError(msg) {
-        if (!isSilent) {
-            throw new Error(getLogPrefix.call(this) + msg);
+        if (canUseConsole && !isSilent) {
+            console.error(getLogPrefix.call(this) + msg);
         }
     }
 
@@ -311,8 +311,8 @@
                 namespace = null;
             }
 
-            if (namespace && namespace[0] != ".") {
-                throw new Error("#" + this._broadName + " - broadcast can't use namespaces without '.' dot");
+            if (namespace && namespace[0] != "." && canUseConsole) {
+                console.error("#" + this._broadName + " - broadcast can't use namespaces without '.' dot");
             }
 
             var map = this._map;
