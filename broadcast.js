@@ -225,7 +225,7 @@
     function addEventGroup(evName, events) {
         var eventsMap = this._eventsMap;
         var map = eventsMap[evName] || {};
-        checkGroupExist(evName, events);
+        checkGroupExist.call(this, evName, events);
         if (!isEventsExists.call(this, evName, events)) {
             for (var key in events) {
                 map[key] = evName + GROUP_DELIMITER + events[key];
@@ -317,7 +317,7 @@
 
             var map = this._map;
 
-            processMessages(msgs, function (msg) {
+            processMessages.call(this, msgs, function (msg) {
                 function callback() {
                     //userCallback();
                 }
@@ -376,7 +376,7 @@
                 }
                 var map = this._map;
                 var cleanAll = (!namespace && !userCallback);
-                processMessages(msgs, function (msg) {
+                processMessages.call(this, msgs, function (msg) {
                     var targets = map[msg];
                     if (targets) {
                         // set all callbacks to dirty and remove them all
