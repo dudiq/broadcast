@@ -1,0 +1,27 @@
+{
+  "name": "broadcast",
+  "version": "1.0.0",
+  "description": "simple events broadcasting using list of callbacks",
+  "main": "broadcast.js",
+  "scripts": {
+    "test": "jest broadcast.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dudiq/broadcast.git"
+  },
+  "keywords": [
+    "broadcast",
+    "pubsub",
+    "events",
+    "callback",
+    "syncronous",
+    "namespace"
+  ],
+  "author": "'dudiq'",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dudiq/broadcast/issues"
+  },
+  "homepage": "https://github.com/dudiq/broadcast#readme"
+}
